@@ -1,0 +1,35 @@
+/* Estilos do Sidebar */
+.sidebar {
+  background-color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out; /* Transição mais suave */
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 30;
+  overflow-x: hidden; /* Esconder conteúdo quando o sidebar for menor */
+}
+
+.sidebar-open {
+  width: 16rem; /* 256px */
+  transform: translateX(0); /* Garantir que esteja visível */
+}
+
+.sidebar-closed {
+  width: 0;
+  transform: translateX(-100%); /* Esconder completamente em mobile */
+}
+
+/* Classe adicional para esconder completamente o sidebar em qualquer tela */
+.sidebar-completely-hidden {
+  width: 0 !important;
+  transform: translateX(-100%) !important;
+}
+
+@media (min-width: 768px) {
+  .sidebar-closed {
+    width: 4rem; /* 64px */
+    transform: translateX(0); /* Normalmente visível em desktop, mesmo fechado */
+  }
+} 
