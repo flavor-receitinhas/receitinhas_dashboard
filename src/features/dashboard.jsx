@@ -5,16 +5,12 @@ import {
 import './styles/dashboard.css';
 import Sidebar from '../components/Navigation/Sidebar';
 
-// Importar os novos componentes de view
 import DashboardView from './views/DashboardView';
 import RecipesView from './views/RecipesView';
 import IngredientsView from './views/IngredientsView';
 import ReportsView from './views/ReportsView';
 import UsersView from './views/UsersView';
-
-// Mock data permanece o mesmo...
-
-// Dashboard component
+ 
 const RecipeDashboard = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 768);

@@ -8,7 +8,6 @@ import { ScrollText, ShoppingBasket, Users } from 'lucide-react';
 const DashboardView = ({ mockRecipes, mockIngredients, mockUsers, mockAnalytics, COLORS }) => {
   return (
     <div className="dashboard-grid">
-      {/* Summary Cards */}
       <div className="card">
         <h3 className="card-title">Total Recipes</h3>
         <div className="card-content">
