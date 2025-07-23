@@ -1,17 +1,22 @@
+import 'package:dash_receitas/firebase_config.dart';
 import 'package:dash_receitas/src/core/global/global_variables.dart';
 import 'package:dash_receitas/src/core/inject/inject.dart';
 import 'package:dash_receitas/src/core/routes/service_modules.dart';
 import 'package:dash_receitas/src/core/themes/custom_theme.dart';
 import 'package:dash_receitas/src/core/themes/theme.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:go_router/go_router.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   Inject.inicialize();
   usePathUrlStrategy();
   GoRouter.optionURLReflectsImperativeAPIs = true;
   ServiceModules().register();
+  await Firebase.initializeApp(options: firebase);
+
   runApp(MyApp());
 }
 

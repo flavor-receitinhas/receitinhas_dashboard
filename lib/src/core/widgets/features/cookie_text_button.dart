@@ -6,12 +6,13 @@ class CookieTextButton extends StatelessWidget {
   final void Function()? onPressed;
   final Color? color;
   final CookieTypography? typography;
-  const CookieTextButton(
-      {super.key,
-      required this.text,
-      required this.onPressed,
-      this.color,
-      this.typography});
+  const CookieTextButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.color,
+    this.typography,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +21,7 @@ class CookieTextButton extends StatelessWidget {
       child: CookieText(
         text: text,
         color: color,
+        isSelect: false,
         typography: typography ?? CookieTypography.body,
       ),
     );

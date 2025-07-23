@@ -20,6 +20,7 @@ class CookieText extends StatelessWidget {
   final TextOverflow? overflow;
   final int? maxLine;
   final List<Shadow>? shadows;
+  final bool isSelect;
   const CookieText({
     super.key,
     required this.text,
@@ -29,21 +30,39 @@ class CookieText extends StatelessWidget {
     this.overflow,
     this.maxLine,
     this.shadows,
+    this.isSelect = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      textAlign: textAlign,
-      overflow: overflow,
-      maxLines: maxLine,
-      style: TextStyle(
-        fontSize: typography.size,
-        fontWeight: typography.isBold ? FontWeight.bold : FontWeight.normal,
-        color: color ?? Theme.of(context).colorScheme.onPrimary,
-        shadows: shadows,
-      ),
-    );
+    return isSelect
+        ? SelectableText(
+            text,
+            textAlign: textAlign,
+            // overflow: overflow,
+            maxLines: maxLine,
+            style: TextStyle(
+              fontSize: typography.size,
+              fontWeight: typography.isBold
+                  ? FontWeight.bold
+                  : FontWeight.normal,
+              color: color ?? Theme.of(context).colorScheme.onPrimary,
+              shadows: shadows,
+            ),
+          )
+        : Text(
+            text,
+            textAlign: textAlign,
+            overflow: overflow,
+            maxLines: maxLine,
+            style: TextStyle(
+              fontSize: typography.size,
+              fontWeight: typography.isBold
+                  ? FontWeight.bold
+                  : FontWeight.normal,
+              color: color ?? Theme.of(context).colorScheme.onPrimary,
+              shadows: shadows,
+            ),
+          );
   }
 }

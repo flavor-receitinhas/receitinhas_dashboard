@@ -1,4 +1,3 @@
- 
 import 'package:dash_receitas/src/core/widgets/features/cookie_text.dart';
 import 'package:flutter/material.dart';
 
@@ -126,30 +125,28 @@ class CookieButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: backgroundColor ?? Theme.of(context).colorScheme.primary,
           borderRadius: borderRadius ?? BorderRadius.circular(14),
-          border:
-              border
-                  ? Border.all(
-                    width: 2,
-                    color: borderColor ?? Theme.of(context).colorScheme.primary,
-                  )
-                  : const Border(),
+          border: border
+              ? Border.all(
+                  width: 2,
+                  color: borderColor ?? Theme.of(context).colorScheme.primary,
+                )
+              : const Border(),
         ),
         child: Row(
-          mainAxisAlignment:
-              prefix != null
-                  ? MainAxisAlignment.start
-                  : MainAxisAlignment.center,
+          mainAxisAlignment: prefix != null
+              ? MainAxisAlignment.start
+              : MainAxisAlignment.center,
           children: [
             isSelect
                 ? Container(
-                  height: 25,
-                  width: 25,
-                  margin: const EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                )
+                    height: 25,
+                    width: 25,
+                    margin: const EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.amber,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                  )
                 : const SizedBox.shrink(),
             prefix ?? const SizedBox.shrink(),
             prefix != null
@@ -157,16 +154,17 @@ class CookieButton extends StatelessWidget {
                 : const SizedBox.shrink(),
             isLoading
                 ? CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                    Theme.of(context).colorScheme.onSecondary,
-                  ),
-                )
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).colorScheme.onSecondary,
+                    ),
+                  )
                 : CookieText(
-                  text: label,
-                  typography: CookieTypography.button,
-                  color:
-                      labelColor ?? Theme.of(context).colorScheme.onSecondary,
-                ),
+                    isSelect: false,
+                    text: label,
+                    typography: CookieTypography.button,
+                    color:
+                        labelColor ?? Theme.of(context).colorScheme.onSecondary,
+                  ),
           ],
         ),
       ),

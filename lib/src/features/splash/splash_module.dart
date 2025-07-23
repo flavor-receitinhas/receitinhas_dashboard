@@ -8,7 +8,7 @@ class SplashModule extends RegisterModule {
   @override
   void inicialize() {
     //controller
-    di.registerFactory<SplashController>(() => SplashController());
+    di.registerFactory<SplashController>(() => SplashController(di()));
   }
 
   @override
