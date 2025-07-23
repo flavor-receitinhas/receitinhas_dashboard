@@ -1,8 +1,11 @@
 import 'package:dash_receitas/src/core/global/assets_enum.dart';
 import 'package:dash_receitas/src/core/global/global_variables.dart';
+import 'package:dash_receitas/src/core/routes/service_modules.dart';
 import 'package:dash_receitas/src/core/widgets/features/cookie_text.dart';
+import 'package:dash_receitas/src/features/auth/presenter/ui/pages/login_page.dart';
 import 'package:dash_receitas/src/features/splash/presenter/controller/splash_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashPage extends StatefulWidget {
   static const route = '/splash';
@@ -16,18 +19,13 @@ class _SplashPageState extends State<SplashPage> {
   SplashController ct = di();
   @override
   void initState() {
-    ct.addListener(() {
-      setState(() {});
+    ServiceModules.of.initialise().then((value) {
+      if (mounted) {
+        context.pushReplacement(
+          ServiceModules.of.initalRoute ?? LoginPage.route,
+        );
+      }
     });
-    if (mounted) {
-      ct.init().then(
-        (value) => Navigator.pushNamedAndRemoveUntil(
-          context,
-          ct.route,
-          (route) => false,
-        ),
-      );
-    }
     super.initState();
   }
 

@@ -2,9 +2,12 @@ import 'dart:developer';
 
 import 'package:dash_receitas/src/core/global/global_variables.dart';
 import 'package:dash_receitas/src/core/routes/register_module.dart';
+import 'package:dash_receitas/src/features/auth/auth_module.dart';
 import 'package:dash_receitas/src/features/auth/presenter/ui/pages/login_page.dart';
+import 'package:dash_receitas/src/features/home/home_module.dart';
 import 'package:dash_receitas/src/features/home/presenter/ui/pages/HOME_page.dart';
 import 'package:dash_receitas/src/features/splash/presenter/ui/pages/splash_page.dart';
+import 'package:dash_receitas/src/features/splash/splash_module.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -34,10 +37,15 @@ class ServiceModules extends ChangeNotifier {
 
   final List<RouteBase> _routes = [];
 
-  final List<RegisterModule> _modules = [];
+  final List<RegisterModule> _modules = [
+    SplashModule(),
+    HomeModule(),
+    AuthModule(),
+  ];
 
   late final GoRouter _router;
   Future<bool> initialise() async {
+    isInicialize = true;
     return true;
   }
 
@@ -56,9 +64,7 @@ class ServiceModules extends ChangeNotifier {
   String? _guard(BuildContext context, GoRouterState state) {
     log('============= route: ${state.uri.path}', name: 'Guard');
     final route = state.uri.path;
-    final noRedirect = [
-      //Colocar a splash
-    ];
+    final noRedirect = [SplashPage.route, LoginPage.route];
 
     if (!isInicialize && route != SplashPage.route) {
       if (!noRedirect.contains(route)) {
@@ -67,7 +73,9 @@ class ServiceModules extends ChangeNotifier {
       log('============= redirect1: ${SplashPage.route}', name: 'Guard');
       return SplashPage.route;
     }
-
+    if (noRedirect.contains(route)) {
+      return null;
+    }
     if (Global.token.isEmpty && route != LoginPage.route) {
       requestedRouteBeforeAuth = route;
       log('============= redirect2: ${LoginPage.route}', name: 'Guard');

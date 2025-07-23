@@ -11,7 +11,7 @@ void main() {
   Inject.inicialize();
   usePathUrlStrategy();
   GoRouter.optionURLReflectsImperativeAPIs = true;
-  ServiceModules.of.register();
+  ServiceModules().register();
   runApp(MyApp());
 }
 
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: _themeController.chooseTheme,
-          routerConfig: ServiceModules.of.routers,
+          routerConfig: ServiceModules().routers,
         );
       },
     );
