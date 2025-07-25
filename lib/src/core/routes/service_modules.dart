@@ -64,7 +64,7 @@ class ServiceModules extends ChangeNotifier {
   String? _guard(BuildContext context, GoRouterState state) {
     log('============= route: ${state.uri.path}', name: 'Guard');
     final route = state.uri.path;
-    final noRedirect = [SplashPage.route, LoginPage.route];
+    final noRedirect = [SplashPage.route, LoginPage.route, HomePage.route];
 
     if (!isInicialize && route != SplashPage.route) {
       if (!noRedirect.contains(route)) {
