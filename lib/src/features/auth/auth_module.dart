@@ -13,7 +13,7 @@ class AuthModule extends RegisterModule {
     di.registerLazySingleton<AuthService>(() => AuthServiceFirebase());
 
     // Registrar o controller de autenticação
-    di.registerFactory<AuthController>(() => AuthController(di()));
+    di.registerFactory<AuthController>(() => AuthController(di(), di()));
   }
 
   @override

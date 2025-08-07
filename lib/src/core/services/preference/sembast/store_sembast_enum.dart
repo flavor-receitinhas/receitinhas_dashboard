@@ -1,3 +1,4 @@
 enum StoreSembastEnum {
   userPreference,
+  user,
 }

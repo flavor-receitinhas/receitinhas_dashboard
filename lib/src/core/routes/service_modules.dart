@@ -2,7 +2,11 @@ import 'dart:developer';
 
 import 'package:dash_receitas/src/core/global/global_variables.dart';
 import 'package:dash_receitas/src/core/routes/register_module.dart';
+import 'package:dash_receitas/src/core/services/preference/sembast/sembast_database.dart';
+import 'package:dash_receitas/src/core/services/preference/sembast/store_sembast_enum.dart';
+import 'package:dash_receitas/src/core/services/preference/user_preference/key_preference.dart';
 import 'package:dash_receitas/src/features/auth/auth_module.dart';
+import 'package:dash_receitas/src/features/auth/domain/entities/user_entity.dart';
 import 'package:dash_receitas/src/features/auth/presenter/ui/pages/login_page.dart';
 import 'package:dash_receitas/src/features/home/home_module.dart';
 import 'package:dash_receitas/src/features/home/presenter/ui/pages/HOME_page.dart';
@@ -12,15 +16,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ServiceModules extends ChangeNotifier {
-  factory ServiceModules() {
-    return _singleton;
-  }
+  factory ServiceModules() => _singleton;
 
   static final ServiceModules _singleton = ServiceModules._internal();
 
   ServiceModules._internal();
 
   static ServiceModules get of => ServiceModules();
+
   bool isInicialize = false;
   String? _organization;
   String? requestedRouteBeforeAuth;
@@ -44,7 +47,19 @@ class ServiceModules extends ChangeNotifier {
   ];
 
   late final GoRouter _router;
+
   Future<bool> initialise() async {
+    final pref = di<PersistentDatabaseSembast>();
+
+    final sessionJson = await pref.get(
+      id: KeyPreferences.userSession.name,
+      store: StoreSembastEnum.user,
+    );
+    if (sessionJson != null) {
+      final session = UserEntity.fromJson(sessionJson);
+      Global.user = session;
+    }
+
     isInicialize = true;
     return true;
   }
@@ -54,6 +69,7 @@ class ServiceModules extends ChangeNotifier {
       module.inicialize();
       _routes.addAll(module.routes());
     }
+
     _router = GoRouter(
       redirect: _guard,
       routes: _routes,
@@ -63,8 +79,10 @@ class ServiceModules extends ChangeNotifier {
 
   String? _guard(BuildContext context, GoRouterState state) {
     log('============= route: ${state.uri.path}', name: 'Guard');
+
     final route = state.uri.path;
-    final noRedirect = [SplashPage.route, LoginPage.route, HomePage.route];
+    final isAuthenticated = Global.user != null;
+    final noRedirect = [SplashPage.route, LoginPage.route];
 
     if (!isInicialize && route != SplashPage.route) {
       if (!noRedirect.contains(route)) {
@@ -73,24 +91,26 @@ class ServiceModules extends ChangeNotifier {
       log('============= redirect1: ${SplashPage.route}', name: 'Guard');
       return SplashPage.route;
     }
-    if (noRedirect.contains(route)) {
-      return null;
-    }
-    if (Global.token.isEmpty && route != LoginPage.route) {
-      requestedRouteBeforeAuth = route;
+
+    if (noRedirect.contains(route)) return null;
+
+    if (!isAuthenticated && route != LoginPage.route) {
+      requestedRouteBeforeAuth = state.uri.toString();
       log('============= redirect2: ${LoginPage.route}', name: 'Guard');
       return LoginPage.route;
     }
-    if (Global.token.isNotEmpty && route == LoginPage.route) {
+
+    if (isAuthenticated && route == LoginPage.route) {
       log('============= redirect3: ${HomePage.route}', name: 'Guard');
       initalRoute = null;
       return HomePage.route;
     }
-    if (initalRoute != null && Global.token.isNotEmpty) {
-      final route = initalRoute;
-      log('============= redirect4: $route', name: 'Guard');
+
+    if (isAuthenticated && initalRoute != null) {
+      final target = initalRoute;
+      log('============= redirect4: $target', name: 'Guard');
       initalRoute = null;
-      return route;
+      return target;
     }
     return null;
   }

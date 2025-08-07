@@ -1,7 +1,6 @@
 import 'package:dash_receitas/src/core/services/preference/persistent_database.dart';
 import 'package:dash_receitas/src/core/services/preference/sembast/store_sembast_enum.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sembast_web/sembast_web.dart';
 import 'package:uuid/uuid.dart';
 
@@ -12,9 +11,7 @@ class PersistentDatabaseSembast
   @override
   Future<void> starting() async {
     DatabaseFactory dbFactory = databaseFactoryWeb;
-    final dir = await getApplicationDocumentsDirectory();
-    // We use the database factory to open the database
-    _db = await dbFactory.openDatabase(join(dir.path, 'sembast_v1.db'));
+    _db = await dbFactory.openDatabase(join('sembast_v1.db'));
   }
 
   @override
