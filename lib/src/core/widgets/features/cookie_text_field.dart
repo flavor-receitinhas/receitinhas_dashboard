@@ -83,7 +83,7 @@ class CookieTextField extends StatelessWidget {
         hintText: hintText,
         contentPadding: const EdgeInsets.all(16),
         hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.5),
             ),
         filled: true,
         fillColor: Theme.of(context).colorScheme.secondary,

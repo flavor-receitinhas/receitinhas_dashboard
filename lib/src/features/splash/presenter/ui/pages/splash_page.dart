@@ -19,12 +19,15 @@ class _SplashPageState extends State<SplashPage> {
   SplashController ct = di();
   @override
   void initState() {
-    ServiceModules.of.initialise().then((value) {
-      if (mounted) {
-        context.pushReplacement(
-          ServiceModules.of.initalRoute ?? LoginPage.route,
-        );
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ct.init();
+      ServiceModules.of.initialise().then((value) {
+        if (mounted) {
+          context.pushReplacement(
+            ServiceModules.of.initalRoute ?? LoginPage.route,
+          );
+        }
+      });
     });
     super.initState();
   }

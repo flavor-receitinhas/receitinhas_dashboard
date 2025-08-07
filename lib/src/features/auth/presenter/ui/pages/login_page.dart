@@ -151,30 +151,11 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: ct.state == StateManager.loading
                             ? null
                             : () async {
-                                context.go(HomePage.route);
-                                // if (!_formKey.currentState!.validate()) {
-                                //   return;
-                                // }
-                                // await ct.login();
-                                // if (ct.state == StateManager.success) {
-                                //   await ct.login();
-                                //   if (ct.state == StateManager.success) {
-                                //     if (context.mounted) {
-                                //       context.go(HomePage.route);
-                                //     }
-                                //   } else {
-                                //     if (context.mounted) {
-                                //       ScaffoldMessenger.of(
-                                //         context,
-                                //       ).showSnackBar(
-                                //         SnackBar(
-                                //           content: Text('Login falhou.'),
-                                //           backgroundColor: Colors.red,
-                                //         ),
-                                //       );
-                                //     }
-                                //   }
-                                // }
+                                await ct.login(context);
+                                if (ct.state == StateManager.success &&
+                                    context.mounted) {
+                                  context.go(HomePage.route);
+                                }
                               },
                         isLoading: ct.state == StateManager.loading,
                         height: 52,

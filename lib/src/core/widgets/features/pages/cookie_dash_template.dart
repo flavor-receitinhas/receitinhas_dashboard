@@ -125,7 +125,7 @@ class _DashboardTemplateState extends State<DashboardTemplate>
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= 1024;
-    final isMobile = MediaQuery.of(context).size.width < 768;
+    // final isMobile = MediaQuery.of(context).size.width < 768;
 
     return CookiePage(
       state: StateManager.success,
