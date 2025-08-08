@@ -14,9 +14,9 @@ class UsersModule implements RegisterModule {
   List<RouteBase> routes() {
     return [
       GoRoute(
-        path: '/usuarios',
+        path: UsersPage.route,
         builder: (context, state) {
-          return const UsuariosPage();
+          return const UsersPage();
         },
       ),
     ];

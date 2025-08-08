@@ -7,14 +7,15 @@ import 'package:dash_receitas/src/features/users/view/components/users_empty.dar
 import 'package:dash_receitas/src/features/users/view/components/users_header.dart';
 import 'package:flutter/material.dart';
 
-class UsuariosPage extends StatefulWidget {
-  const UsuariosPage({super.key});
+class UsersPage extends StatefulWidget {
+  static const String route = '/users';
+  const UsersPage({super.key});
 
   @override
-  State<UsuariosPage> createState() => _UsuariosPageState();
+  State<UsersPage> createState() => _UsersPageState();
 }
 
-class _UsuariosPageState extends State<UsuariosPage> {
+class _UsersPageState extends State<UsersPage> {
   final ct = di<UsersController>();
   @override
   void initState() {
@@ -30,7 +31,7 @@ class _UsuariosPageState extends State<UsuariosPage> {
     final users = ct.users;
     return DashboardTemplate(
       title: 'Usuários',
-      currentRoute: '/usuarios',
+      currentRoute: UsersPage.route,
       child: Column(
         children: [
           UsersHeaderComponent(users: users),

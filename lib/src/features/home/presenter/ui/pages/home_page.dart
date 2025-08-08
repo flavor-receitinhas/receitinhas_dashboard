@@ -10,8 +10,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DashboardTemplate(
-      title: 'Dashboard',
-      currentRoute: '/dashboard',
+      title: 'Home',
+      currentRoute: HomePage.route,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
