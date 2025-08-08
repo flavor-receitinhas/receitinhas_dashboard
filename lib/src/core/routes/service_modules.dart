@@ -182,7 +182,7 @@ class ServiceModules extends ChangeNotifier {
   /// Lida com redirecionamento para rota inicial após autenticação
   String? _handleInitialRouteRedirect(bool isAuthenticated) {
     if (isAuthenticated && initalRoute != null) {
-      final targetRoute = initalRoute!;
+      final targetRoute = HomePage.route;
       initalRoute = null;
       log('Redirecting to initial route: $targetRoute', name: 'RouteGuard');
       return targetRoute;
