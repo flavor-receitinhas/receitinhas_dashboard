@@ -8,6 +8,8 @@ import 'package:dash_receitas/src/core/services/preference/user_preference/key_p
 import 'package:dash_receitas/src/features/auth/auth_module.dart';
 import 'package:dash_receitas/src/features/auth/domain/entities/user_entity.dart';
 import 'package:dash_receitas/src/features/auth/presenter/ui/pages/login_page.dart';
+import 'package:dash_receitas/src/features/ingredients/view/ingredients_module.dart';
+import 'package:dash_receitas/src/features/recipes/view/recipes_module.dart';
 import 'package:dash_receitas/src/features/users/view/users_module.dart';
 import 'package:dash_receitas/src/features/home/home_module.dart';
 import 'package:dash_receitas/src/features/home/presenter/ui/pages/HOME_page.dart';
@@ -50,6 +52,8 @@ class ServiceModules extends ChangeNotifier {
     HomeModule(),
     AuthModule(),
     UsersModule(),
+    IngredientsModule(),
+    RecipesModule(),
   ];
 
   late final GoRouter _router;

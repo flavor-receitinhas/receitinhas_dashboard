@@ -4,6 +4,8 @@ import 'package:dash_receitas/src/core/widgets/cookie_export.dart';
 import 'package:dash_receitas/src/core/widgets/features/pages/components/desktop_sidebar.dart';
 import 'package:dash_receitas/src/core/widgets/features/pages/components/top_bar.dart';
 import 'package:dash_receitas/src/features/home/presenter/ui/pages/home_page.dart';
+import 'package:dash_receitas/src/features/ingredients/view/pages/ingredients_page.dart';
+import 'package:dash_receitas/src/features/recipes/view/pages/recipes_page.dart';
 import 'package:dash_receitas/src/features/users/view/users_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -54,19 +56,17 @@ class _DashboardTemplateState extends State<DashboardTemplate>
     NavigationItem(
       icon: IconsSvgEnum.favorite,
       label: 'Receitas',
-      route: '/receitas',
-      /// TODO: Implementar página de receitas
+      route: RecipesPage.route,
+    ),
+    NavigationItem(
+      icon: IconsSvgEnum.fireRounded,
+      label: 'Ingredientes',
+      route: IngredientsPage.route,
     ),
     NavigationItem(
       icon: IconsSvgEnum.persons,
       label: 'Usuários',
       route: UsersPage.route,
-    ),
-    NavigationItem(
-      icon: IconsSvgEnum.settings,
-      label: 'Configurações',
-      route: '/configuracoes',
-      ///TODO: Implementar página de configurações
     ),
   ];
 
