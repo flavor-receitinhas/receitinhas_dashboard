@@ -1,4 +1,4 @@
-import 'package:dash_receitas/firebase_config.dart';
+import 'package:dash_receitas/firebase_options.dart';
 import 'package:dash_receitas/src/core/global/global_variables.dart';
 import 'package:dash_receitas/src/core/inject/inject.dart';
 import 'package:dash_receitas/src/core/routes/service_modules.dart';
@@ -15,8 +15,7 @@ void main() async {
   usePathUrlStrategy();
   GoRouter.optionURLReflectsImperativeAPIs = true;
   ServiceModules().register();
-  await Firebase.initializeApp(options: firebase);
-
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
 
