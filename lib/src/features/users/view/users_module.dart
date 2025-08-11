@@ -1,12 +1,16 @@
 import 'package:dash_receitas/src/core/global/global_variables.dart';
 import 'package:dash_receitas/src/core/routes/register_module.dart';
 import 'package:dash_receitas/src/features/users/controllers/users_controller.dart';
+import 'package:dash_receitas/src/features/users/domain/services/users_services.dart';
 import 'package:dash_receitas/src/features/users/view/users_page.dart';
 import 'package:go_router/go_router.dart';
 
 class UsersModule implements RegisterModule {
   @override
   void inicialize() {
+    //Services
+    di.registerLazySingleton(() => UsersServices());
+    //Controller
     di.registerLazySingleton(() => UsersController());
   }
 

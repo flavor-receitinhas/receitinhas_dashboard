@@ -1,5 +1,8 @@
 import 'package:dash_receitas/src/core/global/assets_enum.dart';
 import 'package:dash_receitas/src/core/global/global_variables.dart';
+import 'package:dash_receitas/src/core/services/preference/sembast/sembast_database.dart';
+import 'package:dash_receitas/src/core/services/preference/sembast/store_sembast_enum.dart';
+import 'package:dash_receitas/src/core/services/preference/user_preference/key_preference.dart';
 import 'package:dash_receitas/src/core/widgets/cookie_export.dart';
 import 'package:dash_receitas/src/features/auth/presenter/ui/pages/login_page.dart';
 import 'package:flutter/material.dart';
@@ -223,11 +226,19 @@ class TopBar extends StatelessWidget {
                   ),
                 ),
               ],
-              onSelected: (value) {
+              onSelected: (value) async {
                 if (value == 'logout') {
+                  final prefs = di<PersistentDatabaseSembast>();
+
+                  await prefs.delete(
+                    id: KeyPreferences.userSession.name,
+                    store: StoreSembastEnum.user,
+                  );
                   Global.token = '';
                   Global.user = null;
-                  context.go(LoginPage.route);
+                  if (context.mounted) {
+                    context.go(LoginPage.route);
+                  }
                 } else if (value == 'profile') {
                   context.go('/perfil');
                 }

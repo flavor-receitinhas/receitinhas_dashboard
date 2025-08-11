@@ -1,11 +1,20 @@
 import 'package:dash_receitas/src/core/global/assets_enum.dart';
 import 'package:dash_receitas/src/core/widgets/cookie_export.dart';
-import 'package:dash_receitas/src/features/auth/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 
-class UsersHeaderComponent extends StatelessWidget {
-  final List<UserEntity> users;
-  const UsersHeaderComponent({super.key, required this.users});
+class DefaultPageHeaderComponent extends StatelessWidget {
+  final String title;
+  final String description;
+  final List<dynamic> data;
+  final String typeOfData;
+
+  const DefaultPageHeaderComponent({
+    super.key,
+    required this.data,
+    required this.title,
+    required this.description,
+    required this.typeOfData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +22,7 @@ class UsersHeaderComponent extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Colors.yellow.shade400, Colors.yellow.shade600],
+          colors: [Colors.yellow.shade800, Colors.yellow.shade600],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -42,13 +51,13 @@ class UsersHeaderComponent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CookieText(
-                  text: 'Usuários',
+                  text: title,
                   typography: CookieTypography.title,
                   color: Colors.white,
                 ),
                 const SizedBox(height: 4),
                 CookieText(
-                  text: 'Gerencie os usuários da plataforma',
+                  text: description,
                   typography: CookieTypography.body,
                   color: Colors.white.withValues(alpha: 0.9),
                 ),
@@ -62,7 +71,7 @@ class UsersHeaderComponent extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: CookieText(
-              text: '${users.length} usuários',
+              text: '${data.length} $typeOfData',
               typography: CookieTypography.button,
               color: Colors.white,
             ),

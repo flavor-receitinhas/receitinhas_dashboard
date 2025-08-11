@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 
-class UserFiltersComponent extends StatefulWidget {
+class DefaultPageFiltersComponent extends StatefulWidget {
+  final String title;
   final void Function(String) onSearch;
-  const UserFiltersComponent({super.key, required this.onSearch});
+  const DefaultPageFiltersComponent({
+    super.key,
+    required this.onSearch,
+    required this.title,
+  });
 
   @override
-  State<UserFiltersComponent> createState() => _UserFiltersComponentState();
+  State<DefaultPageFiltersComponent> createState() =>
+      _DefaultPageFiltersComponentState();
 }
 
-class _UserFiltersComponentState extends State<UserFiltersComponent> {
+class _DefaultPageFiltersComponentState
+    extends State<DefaultPageFiltersComponent> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -26,7 +33,7 @@ class _UserFiltersComponentState extends State<UserFiltersComponent> {
               child: TextField(
                 onChanged: (widget.onSearch),
                 decoration: InputDecoration(
-                  hintText: 'Buscar usuários...',
+                  hintText: widget.title,
                   prefixIcon: Icon(Icons.search, color: Colors.grey.shade600),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.all(16),
