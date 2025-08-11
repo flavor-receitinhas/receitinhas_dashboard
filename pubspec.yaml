@@ -37,6 +37,10 @@ dependencies:
   firebase_crashlytics: ^4.3.10
   firebase_analytics: ^11.6.0
   toasty_box: ^1.0.4
+  domain_receitinhas:
+    git: 
+      url: https://github.com/flavor-receitinhas/domain_recipes.git
+      ref: 0.0.2
 
 dev_dependencies:
   flutter_test:
