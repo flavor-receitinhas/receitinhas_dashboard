@@ -1,32 +1,39 @@
-import 'package:dash_receitas/src/core/global/global_variables.dart';
-import 'package:dash_receitas/src/features/users/domain/entity/users_entity.dart';
-import 'package:dash_receitas/src/features/users/domain/services/users_services.dart';
+import 'package:domain_receitinhas/features/users/domain/entities/user_entity.dart';
+import 'package:domain_receitinhas/features/users/repositories/users_repository.dart';
 import 'package:flutter/widgets.dart';
 
+import 'package:dash_receitas/src/core/global/global_variables.dart';
+import 'package:dash_receitas/src/features/users/domain/entity/roles_enum.dart';
+import 'package:dash_receitas/src/features/users/domain/services/roles_service.dart';
+
 class UsersController extends ChangeNotifier {
-  final _service = di<UsersServices>();
+  final UsersRepository _repo;
+  final _roleService = di<RolesService>();
+
+  UsersController(this._repo);
+
   List<UsersEntity> _allUsers = [];
   List<UsersEntity> users = [];
 
   Future<void> init() async {
-    users = await _service.listUsers();
+    users = await _repo.listUsers();
     notifyListeners();
   }
 
   Future<void> getAllUsers() async {
-    _allUsers = await _service.listUsers();
+    _allUsers = await _repo.listUsers();
     users = List.from(_allUsers);
     notifyListeners();
   }
 
   Future<void> disableUser(int index) async {
-    await _service.disableUser(users[index].id);
+    await _repo.disableUser(users[index].id);
     users[index].disabled = true;
     notifyListeners();
   }
 
   Future<void> activeUser(int index) async {
-    await _service.enableUser(users[index].id);
+    await _repo.enableUser(users[index].id);
     users[index].disabled = false;
     notifyListeners();
   }
@@ -46,5 +53,11 @@ class UsersController extends ChangeNotifier {
   String formatUserDateTime(String dateTime) {
     final date = DateTime.parse(dateTime);
     return '${date.day}/${date.month}/${date.year}';
+  }
+
+  Future<void> editRole(String userId, RoleEntity role, int index) async {
+    await _roleService.updateRole(role);
+    users[index].role = role.role.name;
+    notifyListeners();
   }
 }

@@ -1,7 +1,7 @@
 import 'package:dash_receitas/src/core/widgets/cookie_export.dart';
 import 'package:dash_receitas/src/features/home/presenter/ui/components/user_provider_stat.dart';
 import 'package:dash_receitas/src/features/home/presenter/ui/components/user_stat_item.dart';
-import 'package:dash_receitas/src/features/users/domain/entity/users_entity.dart';
+import 'package:domain_receitinhas/features/users/domain/entities/user_entity.dart';
 import 'package:flutter/material.dart';
 
 class UserCard extends StatelessWidget {
