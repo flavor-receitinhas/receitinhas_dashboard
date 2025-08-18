@@ -151,7 +151,7 @@ class TopBar extends StatelessWidget {
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                         CookieText(
-                          text: 'Admin',
+                          text: Global.role.name,
                           typography: CookieTypography.tiny,
                           color: Theme.of(context).colorScheme.primary,
                         ),

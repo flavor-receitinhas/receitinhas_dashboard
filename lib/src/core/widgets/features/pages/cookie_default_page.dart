@@ -1,5 +1,7 @@
 import 'package:dash_receitas/src/core/widgets/cookie_export.dart';
 import 'package:dash_receitas/src/core/widgets/features/pages/cookie_dash_template.dart';
+import 'package:dash_receitas/src/features/ingredients/view/components/custom_pop_menu.dart';
+import 'package:dash_receitas/src/features/users/domain/entity/roles_enum.dart';
 import 'package:dash_receitas/src/features/users/view/components/user_filters.dart';
 import 'package:dash_receitas/src/features/users/view/components/users_empty.dart';
 import 'package:dash_receitas/src/features/users/view/components/users_header.dart';
@@ -10,12 +12,14 @@ class DefaultPageEntity {
   final String? description;
   final List<dynamic> data;
   bool isDisabledUser;
+  Roles? role;
 
   DefaultPageEntity({
     required this.title,
     required this.data,
     this.description,
     this.isDisabledUser = false,
+    this.role,
   });
 }
 
@@ -24,10 +28,11 @@ class CookieDefaultPage extends StatefulWidget {
   final String headerDescription;
   final String searchHint;
   final void Function(String) onSearch;
+  final void Function()? onClearSearch;
   final String currentRoute;
   final String pageTitle;
   final List<DefaultPageEntity> data;
-  final Widget Function(int index)? popMenu;
+  final CustomPopupMenu Function(int index)? popMenu;
 
   const CookieDefaultPage({
     super.key,
@@ -39,6 +44,7 @@ class CookieDefaultPage extends StatefulWidget {
     required this.headerDescription,
     this.searchHint = 'Buscar...',
     this.popMenu,
+    this.onClearSearch,
   });
 
   @override
@@ -62,6 +68,7 @@ class _CookieDefaultPageState extends State<CookieDefaultPage> {
           DefaultPageFiltersComponent(
             title: widget.searchHint,
             onSearch: widget.onSearch,
+            onClearSearch: widget.onClearSearch,
           ),
           widget.data.isEmpty
               ? const UsersEmptyComponent()
@@ -116,6 +123,20 @@ class _CookieDefaultPageState extends State<CookieDefaultPage> {
                                         typography: CookieTypography.body,
                                         color: Colors.grey.shade600,
                                       ),
+
+                                      if (widget.data[index].role != null) ...[
+                                        const SizedBox(width: 8),
+                                        Icon(
+                                          Icons.circle,
+                                          size: 8,
+                                          color: widget.data[index].role!.color,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        CookieText(
+                                          text: widget.data[index].role!.name,
+                                          color: widget.data[index].role!.color,
+                                        ),
+                                      ],
                                       if (widget
                                           .data[index]
                                           .isDisabledUser) ...[
@@ -134,7 +155,6 @@ class _CookieDefaultPageState extends State<CookieDefaultPage> {
                                     ],
                                   ),
                                   const SizedBox(height: 4),
-
                                   if (widget.data[index].description !=
                                       null) ...[
                                     const SizedBox(height: 4),
