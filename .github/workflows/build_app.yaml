@@ -1,0 +1,140 @@
+name: Build and Upload Flutter APK
+
+on:
+  push:
+    branches:
+      - dev
+      - master
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Garante que todas as tags sejam obtidas
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '17'
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        flutter-version-file: pubspec.yaml
+
+    - name: Get the latest tag
+      id: get_latest_tag
+      run: |
+        git fetch --tags
+        TAG=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null)
+        if [ -z "$TAG" ]; then
+          echo "Nenhuma tag encontrada. Usando versão inicial 1.0.0"
+          TAG="1.0.0"
+        fi
+        echo "Última tag: $TAG"
+        echo "::set-output name=LATEST_TAG::$TAG"
+
+    - name: Increment tag
+      id: increment_tag
+      run: |
+        echo "Tag atual: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
+        VERSION=${{ steps.get_latest_tag.outputs.LATEST_TAG }}
+        IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
+        if [ ${#VERSION_PARTS[@]} -ne 3 ]; then
+          echo "Formato de versão inválido. Usando versão inicial 1.0.0"
+          VERSION_PARTS=(1 0 0)
+        fi
+        PATCH=${VERSION_PARTS[1]}
+        PATCH=$((PATCH + 1))
+        NEW_VERSION="${VERSION_PARTS[0]}.$PATCH.${VERSION_PARTS[2]}"
+        NEW_TAG="$NEW_VERSION"
+        echo "Nova versão: $NEW_VERSION"
+        echo "::set-output name=NEW_TAG::$NEW_TAG"
+        
+    - name: Update pubspec.yaml version
+      run: |
+        sed -i "s/version: .*/version: ${{ steps.increment_tag.outputs.NEW_TAG }}+1/" pubspec.yaml
+      env:
+        GITHUB_REF: ${{ github.ref }}
+        
+    - name: Install dependencies
+      run: flutter pub get
+     
+    - name: Build APK DEV
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        flutter build web --release --no-tree-shake-icons --web-renderer html
+    
+    - name: Build APK PROD
+      if: github.ref == 'refs/heads/master'
+      run: |
+        flutter build web --release --no-tree-shake-icons --web-renderer html --dart-define=ENVIRONMENT=production 
+
+    - name: Create and push tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config user.name "${{ github.actor }}"
+        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git tag ${{ steps.increment_tag.outputs.NEW_TAG }}
+        git push origin ${{ steps.increment_tag.outputs.NEW_TAG }}
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: web-build
+        path: build/web  
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Download build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: web-build
+        path: build/web
+
+    ###### DEV ######
+    - name: Set up SSH for DEV
+      if: github.ref == 'refs/heads/dev'
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+
+    - name: Copy build/web to server DEV
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        scp -o StrictHostKeyChecking=no -r build/web/* ubuntu@${{ secrets.SSH_IP_DEV }}:app_dashboard/web
+
+    - name: Restart container DEV
+      if: github.ref == 'refs/heads/dev'
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_IP_DEV }} "cd app_dashboard && sudo docker compose up -d --force-recreate"
+
+    ###### PROD ######
+
+    - name: Set up SSH for PROD
+      if: github.ref == 'refs/heads/main'
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_PROD }}
+
+    - name: Copy build/web to server PROD
+      if: github.ref == 'refs/heads/main'
+      run: |
+        scp -o StrictHostKeyChecking=no -r build/web/* ubuntu@${{ secrets.SSH_IP_PROD }}:app_dashboard/web
+
+    - name: Restart container PROD
+      if: github.ref == 'refs/heads/main'
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.SSH_IP_PROD }} "cd app_dashboard && sudo docker compose up -d --force-recreate"
