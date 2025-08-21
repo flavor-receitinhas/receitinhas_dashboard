@@ -86,7 +86,7 @@ jobs:
     - name: Build Web PROD
       if: github.ref == 'refs/heads/master'
       run: |
-        flutter build web --release --no-tree-shake-icons --web-renderer html --dart-define=ENVIRONMENT=production 
+        flutter build web --release --no-tree-shake-icons --dart-define=ENVIRONMENT=production 
 
     - name: Set up Node.js
       uses: actions/setup-node@v3
