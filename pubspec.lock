@@ -128,7 +128,7 @@ packages:
       path: "."
       ref: "0.0.4"
       resolved-ref: "39543596051bdb325101137155bd3dcf50b493c0"
-      url: "https://github.com/flavor-receitinhas/domain_recipes.git"
+      url: "git@github.com:flavor-receitinhas/domain_recipes.git"
     source: git
     version: "0.0.2"
   fake_async:
