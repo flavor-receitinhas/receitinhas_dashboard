@@ -6,12 +6,25 @@ import 'package:dash_receitas/src/core/themes/custom_theme.dart';
 import 'package:dash_receitas/src/core/themes/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:go_router/go_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await dotenv.load(fileName: ".env");
+  await Firebase.initializeApp(
+    options: FirebaseOptions(
+      apiKey: dotenv.env['APIKEY']!,
+      appId: dotenv.env['APPID']!,
+      messagingSenderId: dotenv.env['MESSAGINGSENDERID']!,
+      projectId: dotenv.env['PROJECTID']!,
+      authDomain: dotenv.env['AUTHDOMAIN']!,
+      databaseURL: dotenv.env['DATABASEURL']!,
+      storageBucket: dotenv.env['STORAGEBUCKET'],
+      measurementId: dotenv.env['MEASUREMENTID'],
+    ),
+  );
   Inject.inicialize();
   usePathUrlStrategy();
   GoRouter.optionURLReflectsImperativeAPIs = true;

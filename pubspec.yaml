@@ -41,6 +41,7 @@ dependencies:
     git: 
       url: git@github.com:flavor-receitinhas/domain_recipes.git
       ref: 0.0.4
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -55,3 +56,4 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - .env
