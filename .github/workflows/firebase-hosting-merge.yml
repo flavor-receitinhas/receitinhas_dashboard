@@ -1,54 +1,54 @@
-name: Deploy to Firebase Hosting
+# name: Deploy to Firebase Hosting
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+# on:
+#   push:
+#     branches:
+#       - master
+#   pull_request:
+#     branches:
+#       - master
 
-jobs:
-  build_and_deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   build_and_deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+#     steps:
+#     - name: Checkout Repository
+#       uses: actions/checkout@v4
+#       with:
+#         token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Configure Git for private repos
-      run: |
-        git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#     - name: Configure Git for private repos
+#       run: |
+#         git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        channel: 'stable'
+#     - name: Set up Flutter
+#       uses: subosito/flutter-action@v2
+#       with:
+#         channel: 'stable'
     
-    - name: Flutter Version
-      run: flutter --version
+#     - name: Flutter Version
+#       run: flutter --version
 
-    - name: Install Dependencies
-      run: flutter pub get
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#     - name: Install Dependencies
+#       run: flutter pub get
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build Flutter Web
-      run: flutter build web --release
+#     - name: Build Flutter Web
+#       run: flutter build web --release
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
+#     - name: Set up Node.js
+#       uses: actions/setup-node@v4
+#       with:
+#         node-version: '18'
 
-    - name: Install Firebase CLI
-      run: npm install -g firebase-tools
+#     - name: Install Firebase CLI
+#       run: npm install -g firebase-tools
 
-    - name: Deploy to Firebase Hosting
-      run: firebase deploy --only hosting --project receitinhas-28d4a
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECEITINHAS_28D4A }}
+#     - name: Deploy to Firebase Hosting
+#       run: firebase deploy --only hosting --project receitinhas-28d4a
+#       env:
+#         FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECEITINHAS_28D4A }}
