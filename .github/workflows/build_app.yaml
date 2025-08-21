@@ -83,8 +83,7 @@ jobs:
         flutterfire configure \
           --project=receitinhas-28d4a \
           --platforms=web \
-          --yes \
-          --overwrite-firebase-options
+          -y
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECEITINHAS_28D4A }}
     
