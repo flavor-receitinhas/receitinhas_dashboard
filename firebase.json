@@ -1,0 +1,19 @@
+{
+  "flutter": {
+    "platforms": {
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "receitinhas-28d4a",
+          "configurations": {
+            "web": "1:295547024535:web:26e592d02dcbee3a8be5d2"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "source": ".",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "frameworksBackend": { "region": "us-central1" }
+  }
+}
