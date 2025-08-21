@@ -1,4 +1,3 @@
-import 'package:dash_receitas/firebase_options.dart';
 import 'package:dash_receitas/src/core/global/global_variables.dart';
 import 'package:dash_receitas/src/core/inject/inject.dart';
 import 'package:dash_receitas/src/core/routes/service_modules.dart';
