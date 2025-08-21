@@ -79,10 +79,15 @@ jobs:
       run: dart pub global activate flutterfire_cli
 
     - name: Configure Firebase
-      run: flutterfire configure --project=receitinhas-28d4a --platforms=web --yes
+      run: |
+        flutterfire configure \
+          --project=receitinhas-28d4a \
+          --platforms=web \
+          --yes \
+          --overwrite-firebase-options
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECEITINHAS_28D4A }}
-
+    
     - name: Install dependencies
       run: flutter pub get
      
