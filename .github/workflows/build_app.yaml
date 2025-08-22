@@ -3,137 +3,147 @@ name: Build and Deploy Flutter Web to Firebase
 on:
   push:
     branches:
-    #   - dev
       - master
+      - dev
+
 permissions: write-all
 
 jobs:
-  build_and_deploy:
+  analyze:
+    name: "Analyze"
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Garante que todas as tags sejam obtidas
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        channel: stable
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
 
-    - name: Create .env file
-      run: |
-        cat << 'EOF' > .env
-            APIKEY=${{ secrets.FIREBASE_API_KEY }}
-            APPID=${{ secrets.FIREBASE_APP_ID }}
-            MESSAGINGSENDERID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-            PROJECTID=${{ secrets.FIREBASE_PROJECT_ID }}
-            AUTHDOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
-            DATABASEURL=${{ secrets.FIREBASE_DATABASE_URL }}
-            STORAGEBUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
-            MEASUREMENTID=${{ secrets.FIREBASE_MEASUREMENT_ID }}
+      - name: Create .env file
+        run: |
+          cat << 'EOF' > .env
+          APIKEY=${{ secrets.FIREBASE_API_KEY }}
+          APPID=${{ secrets.FIREBASE_APP_ID }}
+          MESSAGINGSENDERID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          PROJECTID=${{ secrets.FIREBASE_PROJECT_ID }}
+          AUTHDOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          DATABASEURL=${{ secrets.FIREBASE_DATABASE_URL }}
+          STORAGEBUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          MEASUREMENTID=${{ secrets.FIREBASE_MEASUREMENT_ID }}
           EOF
 
-    - name: Get the latest tag
-      id: get_latest_tag
-      run: |
-        # Verificar se existem tags no repositório
-        if git tag -l | grep -q .; then
-          echo "Tags encontradas no repositório"
-          git fetch --tags || echo "Aviso: Falha ao fazer fetch das tags"
-          TAG=$(git tag -l --sort=-version:refname | head -n1)
-          if [ -z "$TAG" ]; then
-            echo "Nenhuma tag válida encontrada. Usando versão inicial 1.0.0"
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+
+  build:
+    name: "Build"
+    needs: analyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Create .env file
+        run: |
+          cat << 'EOF' > .env
+          APIKEY=${{ secrets.FIREBASE_API_KEY }}
+          APPID=${{ secrets.FIREBASE_APP_ID }}
+          MESSAGINGSENDERID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          PROJECTID=${{ secrets.FIREBASE_PROJECT_ID }}
+          AUTHDOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          DATABASEURL=${{ secrets.FIREBASE_DATABASE_URL }}
+          STORAGEBUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          MEASUREMENTID=${{ secrets.FIREBASE_MEASUREMENT_ID }}
+          EOF
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Web
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/master" ]; then
+            flutter build web --release --no-tree-shake-icons --dart-define=ENVIRONMENT=production
+          else
+            flutter build web --release --no-tree-shake-icons
+          fi
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web
+
+  deploy:
+    name: "Deploy"
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-build
+          path: build/web
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECEITINHAS_28D4A }}'
+          channelId: live
+          projectId: receitinhas-28d4a
+
+  tag_release:
+    name: "Create Release Tag"
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest tag and increment
+        id: increment_tag
+        run: |
+          if git tag -l | grep -q .; then
+            TAG=$(git tag -l --sort=-version:refname | head -n1)
+            if [ -z "$TAG" ]; then
+              TAG="1.0.0"
+            fi
+          else
             TAG="1.0.0"
           fi
-        else
-          echo "Nenhuma tag encontrada no repositório. Usando versão inicial 1.0.0"
-          TAG="1.0.0"
-        fi
-        echo "Última tag: $TAG"
-        echo "LATEST_TAG=$TAG" >> $GITHUB_OUTPUT
+          
+          IFS='.' read -r -a VERSION_PARTS <<< "$TAG"
+          if [ ${#VERSION_PARTS[@]} -ne 3 ]; then
+            VERSION_PARTS=(1 0 0)
+          fi
+          
+          PATCH=${VERSION_PARTS[2]}
+          PATCH=$((PATCH + 1))
+          NEW_TAG="${VERSION_PARTS[0]}.${VERSION_PARTS[1]}.$PATCH"
+          
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_OUTPUT
 
-    - name: Increment tag
-      id: increment_tag
-      run: |
-        echo "Tag atual: ${{ steps.get_latest_tag.outputs.LATEST_TAG }}"
-        VERSION=${{ steps.get_latest_tag.outputs.LATEST_TAG }}
-        IFS='.' read -r -a VERSION_PARTS <<< "$VERSION"
-        if [ ${#VERSION_PARTS[@]} -ne 3 ]; then
-          echo "Formato de versão inválido. Usando versão inicial 1.0.0"
-          VERSION_PARTS=(1 0 0)
-        fi
-        PATCH=${VERSION_PARTS[1]}
-        PATCH=$((PATCH + 1))
-        NEW_VERSION="${VERSION_PARTS[0]}.$PATCH.${VERSION_PARTS[2]}"
-        NEW_TAG="$NEW_VERSION"
-        echo "Nova versão: $NEW_VERSION"
-        echo "::set-output name=NEW_TAG::$NEW_TAG"
-        
-    - name: Update pubspec.yaml version
-      run: |
-        sed -i "s/version: .*/version: ${{ steps.increment_tag.outputs.NEW_TAG }}+1/" pubspec.yaml
-      env:
-        GITHUB_REF: ${{ github.ref }}
-        
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.9.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_KEY }}
-
-    - name: Add known hosts
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan github.com >> ~/.ssh/known_hosts
-    
-    - name: Install dependencies
-      run: flutter pub get
-     
-    # - name: Build Web DEV
-    #   if: github.ref == 'refs/heads/dev'
-    #   run: |
-    #     flutter build web --release --no-tree-shake-icons --web-renderer html
-    
-    - name: Build Web PROD
-      if: github.ref == 'refs/heads/master'
-      run: |
-        flutter build web --release --no-tree-shake-icons --dart-define=ENVIRONMENT=production 
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-
-    - name: Install Firebase CLI
-      run: npm install -g firebase-tools
-
-    # - name: Deploy to Firebase DEV
-    #   if: github.ref == 'refs/heads/dev'
-    #   run: firebase deploy --only hosting --project receitinhas-28d4a-dev
-    #   env:
-    #     FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_DEV }}
-
-    - name: Firebase Experimental
-      run: firebase experiments:enable webframeworks
-
-    - name: Deploy to Firebase PROD
-      if: github.ref == 'refs/heads/master'
-      run: firebase deploy --only hosting --project receitinhas-28d4a
-      env:
-        FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_RECEITINHAS_28D4A }}
-
-    - name: Create and push tag
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        git config user.name "${{ github.actor }}"
-        git config user.email "${{ github.actor }}@users.noreply.github.com"
-        git tag ${{ steps.increment_tag.outputs.NEW_TAG }}
-        git push origin ${{ steps.increment_tag.outputs.NEW_TAG }}
-
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: web-build-${{ steps.increment_tag.outputs.NEW_TAG }}
-        path: build/web
+      - name: Create and push tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git tag ${{ steps.increment_tag.outputs.NEW_TAG }}
+          git push origin ${{ steps.increment_tag.outputs.NEW_TAG }}
