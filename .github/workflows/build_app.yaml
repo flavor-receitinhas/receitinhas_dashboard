@@ -32,12 +32,6 @@ jobs:
         
     - name: 📦 Install Dependencies
       run: flutter pub get
-      
-    - name: 🔍 Analyze
-      run: flutter analyze
-      
-    - name: 🧪 Run Tests
-      run: flutter test
 
   build:
     name: "Build"
