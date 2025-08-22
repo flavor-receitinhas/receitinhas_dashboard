@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: "assets/.env");
+  await dotenv.load(fileName: "assets/env");
   await Firebase.initializeApp(
     options: FirebaseOptions(
       apiKey: dotenv.env['APIKEY']!,

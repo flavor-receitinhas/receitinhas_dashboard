@@ -22,9 +22,9 @@ jobs:
       with:
         channel: stable
 
-    - name: Create .env file
+    - name: Create env file
       run: |
-        cat << 'EOF' > assets/.env
+        cat << 'EOF' > assets/env
         APIKEY=${{ secrets.FIREBASE_API_KEY }}
         APPID=${{ secrets.FIREBASE_APP_ID }}
         MESSAGINGSENDERID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
